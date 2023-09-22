@@ -1,0 +1,15 @@
+
+.documentExplorer {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.documentTreeContainer {
+    border-right: 1px solid #ccc;
+}
+
+.documentContainer {
+    background-color: transaprent;
+}

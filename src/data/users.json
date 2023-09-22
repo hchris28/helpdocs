@@ -1,0 +1,18 @@
+[
+    {
+        "company": {
+            "key": "gently-hugged",
+            "name": "Gently Hugged"
+        },
+        "users": [
+            {
+                "name": "Judy Blackford",
+                "email": "judy.gentlyhugged@gmail.com"
+            },
+            {
+                "name": "Chris Haskins",
+                "email": "chris@xeelee.org"
+            }
+        ]
+    }
+]
