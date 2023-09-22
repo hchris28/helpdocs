@@ -7,6 +7,7 @@ $blue-green: #219ebcff;
 $prussian-blue: #023047ff;
 $selective-yellow: #ffb703ff;
 $ut-orange: #fb8500ff;
+$error-red: #721111;
 
 $gradient-top: linear-gradient(0deg, #8ecae6ff, #219ebcff, #023047ff, #ffb703ff, #fb8500ff);
 $gradient-right: linear-gradient(90deg, #8ecae6ff, #219ebcff, #023047ff, #ffb703ff, #fb8500ff);
@@ -17,3 +18,34 @@ $gradient-bottom-right: linear-gradient(135deg, #8ecae6ff, #219ebcff, #023047ff,
 $gradient-top-left: linear-gradient(225deg, #8ecae6ff, #219ebcff, #023047ff, #ffb703ff, #fb8500ff);
 $gradient-bottom-left: linear-gradient(315deg, #8ecae6ff, #219ebcff, #023047ff, #ffb703ff, #fb8500ff);
 $gradient-radial: radial-gradient(#8ecae6ff, #219ebcff, #023047ff, #ffb703ff, #fb8500ff);
+
+@mixin as-button($bg-color: $sky-blue, $bg-color-hover: $blue-green) {
+    display: inline-block;
+    padding: .5rem 1rem;
+    border-radius: .25rem;
+    border: none;
+    background-color: $bg-color;
+    color: $text-color-default;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+    box-shadow: 1px 1px 3px rgba($text-color-default, .3);
+    &:hover {
+        background-color: $bg-color-hover;
+        color: #eee;
+    }
+}
+
+@mixin as-input {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: .5rem;
+    border-radius: .25rem;
+    border: 1px solid rgba($text-color-default, .3);
+    font-size: 1.2rem;
+    &:focus {
+        outline: none;
+        border: 1px solid rgba($text-color-default, .7);
+    }
+}

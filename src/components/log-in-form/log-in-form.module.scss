@@ -1,0 +1,22 @@
+@import "../../styles/global.scss";
+
+.form {
+    width: 30vw;
+    padding: 2rem;
+    background-color: rgba($sky-blue, .3);
+    border-radius: .25rem;
+}
+
+.errorMessage {
+    color: $error-red;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+.emailInput {
+    @include as-input;
+}
+
+.submitButton {
+    @include as-button;
+}

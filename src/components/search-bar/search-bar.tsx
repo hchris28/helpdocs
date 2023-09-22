@@ -44,11 +44,11 @@ const SearchBar: React.FC = () => {
                 }
             }
         }
-    `)
+    `);
 
     const searchWindowRef = useRef<HTMLInputElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
-    const companyName = useReadLocalStorage('company');
+    const user = useReadLocalStorage<User>('user');
     const [searchText, setSearchText] = useState<string>("");
     const debouncedSearchText = useDebounce(searchText, 150);
     const [results, setResults] = useState<SearchResult[]>([]);
@@ -57,7 +57,7 @@ const SearchBar: React.FC = () => {
         if (debouncedSearchText.length > charSearchMin) {
             setResults(data.allMdx.nodes
                 .filter(({ fields: { company }, frontmatter: { title }, body }: SearchResult) => {
-                    return company === companyName && (
+                    return company === user?.company.key && (
                         title.toLowerCase().includes(debouncedSearchText.toLowerCase())
                         || body.toLowerCase().includes(debouncedSearchText.toLowerCase())
                     );
@@ -65,7 +65,7 @@ const SearchBar: React.FC = () => {
         } else {
             setResults([]);
         }
-    }, [debouncedSearchText, companyName, data.allMdx.nodes]);
+    }, [debouncedSearchText, user, data.allMdx.nodes]);
 
     // Handle keyboard events, close search window when user presses escape
     // and focus on search input when user presses CTRL + forward slash
