@@ -1,4 +1,3 @@
-// icon:close | Ionicons https://ionicons.com/ | Ionic Framework
 import * as React from "react";
 
 function CloseIcon(props: React.SVGProps<SVGSVGElement>) {
