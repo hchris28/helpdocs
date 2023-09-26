@@ -1,0 +1,13 @@
+@import "../../styles/global.scss";
+
+.asideContainer {
+    background-color: rgba($sky-blue, 0.1);
+    border: solid 1px rgba($sky-blue, 0.2);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+}

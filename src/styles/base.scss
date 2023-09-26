@@ -29,10 +29,6 @@ h6:first-child {
     margin-top: 0;
 }
 
-p, li {
-    max-width: 75ch;
-}
-
 a {
     color: $text-color-default;
     transition: color 0.2s ease-in-out;
