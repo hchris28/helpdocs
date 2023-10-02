@@ -26,7 +26,7 @@
     background-color: #fff;
     color: $text-color-default;
     position: relative; // needed for z-index
-    z-index: 1; // for positioning on top of search results container
+    z-index: 101; // for positioning on top of search results container
 
     &:focus-within {
         box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
@@ -73,6 +73,7 @@
     box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
     background-color: rgba($sky-blue, .95);
     padding: 3rem 1rem 1rem 1rem;
+    z-index: 100;
 
     @media screen and (max-width: 600px) {
         left: 0;
