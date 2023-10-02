@@ -21,3 +21,8 @@ interface DocumentTreeItem {
     slug: string;
     children: DocumentTreeItem[];
 };
+
+interface BreadcrumbItem {
+    title: string;
+    slug: string;
+}

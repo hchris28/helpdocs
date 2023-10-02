@@ -4,6 +4,7 @@ import { useReadLocalStorage } from 'usehooks-ts'
 import { navigate}  from 'gatsby'
 import DocumentTree from '../../components/document-tree/document-tree'
 import Document from '../../components/document/document'
+import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs'
 import MasterLayout from '../../components/layout/master-layout'
 import SearchBar from '../../components/search-bar/search-bar'
 import ToolBar from '../../components/tool-bar/tool-bar'
@@ -17,10 +18,11 @@ type IndexPageContext = {
     company: string
     slug: string
     documentTree: DocumentTreeItem[]
+    breadcrumbs: BreadcrumbItem[]
 }
 
 const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
-    pageContext: { documentTree },
+    pageContext: { documentTree, breadcrumbs },
     children
 }) => {
     
@@ -41,7 +43,10 @@ const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
                     <DocumentTree data={documentTree} />
                 </div>
                 <div className={styles.documentContainer}>
-                    <Document>{children}</Document>
+                    <Breadcrumbs items={breadcrumbs} />
+                    <Document>
+                        {children}
+                    </Document>
                 </div>
             </div>
         </MasterLayout>

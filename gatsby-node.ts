@@ -1,3 +1,4 @@
+import { log } from "console";
 import { GatsbyNode } from "gatsby"
 
 import path from 'path';
@@ -100,7 +101,7 @@ export const createPages: GatsbyNode['createPages'] = async ({
         const docTopicArray = doc.fields.slug.split('/');
         const basename = docTopicArray.pop();
         const docLevel = docTopicArray.length;
-        
+
         if (docLevel === topicLevel) {
             return basename === 'index'
                 ? DocDescendantType.Index
@@ -123,17 +124,17 @@ export const createPages: GatsbyNode['createPages'] = async ({
         const allDocs = companyGroup.nodes;
 
         function createDocumentTreeItem(topic: string[], title: string, slug: string): DocumentTreeItem {
-            
+
             const children: DocumentTreeItem[] = [];
             const topicDocs = allDocs
                 .filter((doc) => doc.fields.slug !== slug && doc.fields.slug.startsWith(topic.join('/')))
                 .sort(orderComparator);
             topicDocs?.forEach((topicDoc) => {
                 const descendantType = getDocDescendantType(topic, topicDoc);
-                
+
                 switch (descendantType) {
                     case DocDescendantType.Document:
-                        children.push({title: topicDoc.frontmatter.title, slug: topicDoc.fields.slug, children: []});
+                        children.push({ title: topicDoc.frontmatter.title, slug: topicDoc.fields.slug, children: [] });
                         break;
                     case DocDescendantType.SubtopicIndex:
                         const { frontmatter: { title }, fields: { slug } } = topicDoc;
@@ -148,7 +149,7 @@ export const createPages: GatsbyNode['createPages'] = async ({
                         break;
                 };
             });
-            
+
             return { title, slug, children };
         };
 
@@ -171,6 +172,30 @@ export const createPages: GatsbyNode['createPages'] = async ({
         });
     });
 
+    function getBreadcrumbs(slug: string, companyDocs: Array<DocumentMdx>) : BreadcrumbItem[] {
+        const breadcrumbs: BreadcrumbItem[] = [];
+        const end = slug.endsWith('/index') ? -2 : -1;
+        const slugArray = slug.split('/').slice(0, end);
+
+        while (slugArray.length > 1) {
+            const parentSlug = slugArray.join('/');
+            const parent = companyDocs.find((doc) => {
+                return doc.fields.slug === parentSlug
+                    || doc.fields.slug === `${parentSlug}/index`;
+            });
+
+            if (!parent) {
+                log(`Parent not found for ${slug}`);
+                break;
+            }
+
+            breadcrumbs.push({ slug: parent.fields.slug, title: parent.frontmatter.title });
+
+            slugArray.pop();
+        }
+        return breadcrumbs.reverse();
+    }
+
     // Create the pages
     companyGroups.forEach((companyGroup) => {
 
@@ -189,7 +214,8 @@ export const createPages: GatsbyNode['createPages'] = async ({
             context: {
                 company: company,
                 slug: companyIndex.fields.slug,
-                documentTree: documentTree.get(company)
+                documentTree: documentTree.get(company),
+                breadcrumbs: getBreadcrumbs(companyIndex.fields.slug, companyDocs)
             }
         })
 
@@ -201,7 +227,8 @@ export const createPages: GatsbyNode['createPages'] = async ({
                 context: {
                     company: company,
                     slug: slug,
-                    documentTree: documentTree.get(company)
+                    documentTree: documentTree.get(company),
+                    breadcrumbs: getBreadcrumbs(slug, companyDocs)
                 }
             })
         });

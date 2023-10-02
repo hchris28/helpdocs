@@ -1,0 +1,61 @@
+@use "sass:color";
+@import '../../styles/global.scss';
+;
+
+$color1: color.adjust($sky-blue, $lightness: 10%);
+$color2: color.adjust($sky-blue, $lightness: 20%);
+$color3: color.adjust($sky-blue, $lightness: 30%);
+
+.container {
+    display: flex;
+}
+
+.breadcrumb {
+    background-color: $color1;
+    position: relative;
+
+    &:first-child {
+        border-top-left-radius: .25rem;
+        border-bottom-left-radius: .25rem;
+        padding-left: .25rem;
+    }
+
+    &:after {
+        content: '';
+        display: block;
+        width: 25px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: -25px;
+        border-top: 25px solid transparent;
+        border-left: 10px solid $color1;
+        z-index: 1;
+    }
+
+    &:not(:first-child) {
+        padding-left: 10px;
+    }
+
+    a {
+        text-decoration: none;
+        padding: 0.15rem .5rem;
+        display: block;
+    }
+
+    &.breadcrumb:nth-child(2) {
+        background-color: $color2;
+        
+        &:after {
+            border-left-color: $color2;
+        }
+    }
+
+    &.breadcrumb:nth-child(3) {
+        background-color: $color3;
+        
+        &:after {
+            border-left-color: $color3;
+        }
+    }
+}
