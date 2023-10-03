@@ -24,7 +24,7 @@ const AnimGif = ({ children, path }: PropsWithChildren<AnimGifProps>): JSX.Eleme
             <button className={styles.button} onClick={showPopup}>Show Me!</button>
             {isPopupVisible &&
                 <div className={styles.popup} onClick={hidePopup}>
-                    <img src={path} />
+                    <img src={`${path}?${new Date().getTime()}`} />
                 </div>}
         </div>
     )
