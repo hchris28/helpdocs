@@ -12,7 +12,19 @@ const config: GatsbyConfig = {
     plugins: [
         "gatsby-plugin-sass",
         "gatsby-plugin-image",
-        "gatsby-plugin-mdx",
+        {
+            resolve: "gatsby-plugin-mdx",
+            options: {
+                gatsbyRemarkPlugins: [
+                    {
+                        resolve: `gatsby-remark-images`,
+                        options: {
+                            maxWidth: 1200,
+                        },
+                    },
+                ],
+            },
+        },
         "gatsby-plugin-sharp",
         "gatsby-transformer-sharp",
         `gatsby-transformer-json`,
@@ -20,14 +32,14 @@ const config: GatsbyConfig = {
             resolve: 'gatsby-source-filesystem',
             options: {
                 "name": "images",
-                "path": "./src/images/"
+                "path": `${__dirname}/static/images/`,
             },
             __key: "images"
         }, {
             resolve: 'gatsby-source-filesystem',
             options: {
                 "name": "pages",
-                "path": "./src/pages/"
+                "path": `${__dirname}/src/pages/`
             },
             __key: "pages"
         }, {
