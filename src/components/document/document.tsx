@@ -1,11 +1,11 @@
 import React, { PropsWithChildren } from "react"
 import { MDXProvider } from "@mdx-js/react"
 import Aside from "../aside/aside";
-import AnimGif from "../anim-gif/anim-gif";
+import ShowMe from "../show-me/show-me";
 
 const shortcodes = {
     Aside,
-    AnimGif,
+    ShowMe,
 };
 
 const Document = ({ children }: PropsWithChildren): JSX.Element => {
