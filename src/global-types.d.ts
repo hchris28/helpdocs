@@ -3,6 +3,7 @@ interface User {
     name: string;
     email: string;
     company: Company
+    Anonymous?: boolean;
 }
 
 interface Company {

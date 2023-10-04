@@ -67,12 +67,6 @@ const LogInForm = (): JSX.Element => {
         navigate(`/${companyUsers.company.key}/`);
     }
 
-    useEffect(() => {
-        if (user) {
-            navigate(`/${user.company.key}/`);
-        }
-    }, [user]);
-
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
             {error && <p className={styles.errorMessage}>{error}</p>}

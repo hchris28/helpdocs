@@ -9,7 +9,7 @@ const LogOutButton = (): JSX.Element => {
     const [user, setUser] = useLocalStorage<User | undefined>('user', undefined);
 
     const handleClick = () => {
-        setUser(undefined);
+        setUser({ Anonymous: true, company: { key: '', name: '' }, name: '', email: '' });
         navigate('/');
     }
 
