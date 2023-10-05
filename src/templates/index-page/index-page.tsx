@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import type { PageProps } from "gatsby"
 import { useReadLocalStorage } from 'usehooks-ts'
 import { navigate } from 'gatsby'
+import TableOfContents from '../../components/table-of-contents/table-of-contents'
 import DocumentTree from '../../components/document-tree/document-tree'
 import Document from '../../components/document/document'
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs'
@@ -17,12 +18,14 @@ type IndexPageProps = {
 type IndexPageContext = {
     company: string
     slug: string
+    title: string
     documentTree: DocumentTreeItem[]
     breadcrumbs: BreadcrumbItem[]
+    tableOfContents: TableOfContentsItem[]
 }
 
 const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
-    pageContext: { documentTree, breadcrumbs },
+    pageContext: { documentTree, breadcrumbs, title, tableOfContents },
     children
 }) => {
 
@@ -36,7 +39,7 @@ const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
             setWaitingForUserData(false);
         }
     }, [user]);
-
+    console.log(tableOfContents);
     return (
         <MasterLayout>
             <LoadingBoundary isLoading={waitingForUserData}>
@@ -48,6 +51,8 @@ const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
                     <div className={styles.documentContainer}>
                         <Breadcrumbs items={breadcrumbs} />
                         <Document>
+                            <h1>{title}</h1>
+                            <TableOfContents items={tableOfContents} />
                             {children}
                         </Document>
                     </div>

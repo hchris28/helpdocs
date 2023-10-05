@@ -22,6 +22,12 @@ const config: GatsbyConfig = {
                             maxWidth: 1200,
                         },
                     },
+                    {
+                        resolve: `gatsby-remark-autolink-headers`,
+                        options: {
+                            icon: false,
+                        },
+                    },
                 ],
             },
         },

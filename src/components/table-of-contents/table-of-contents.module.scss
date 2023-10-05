@@ -1,0 +1,38 @@
+@use "sass:color";
+@import "../../styles/global.scss";
+
+.container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: .9rem;
+}
+
+.tocContainer {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.tocItem {
+    background-color: color.adjust($selective-yellow, $lightness: 30%);
+    padding: 0.15rem .45rem;
+    border-radius: .25rem;
+    transition: background-color .2s ease-in-out;
+
+    &:hover {
+        background-color: color.adjust($selective-yellow, $lightness: 20%);
+    }
+
+    a {
+        text-decoration: none;
+        
+        &:hover {
+            text-decoration: none;
+            color: $text-color-default;
+        }
+    }
+}

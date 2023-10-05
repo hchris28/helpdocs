@@ -66,6 +66,7 @@ export const createPages: GatsbyNode['createPages'] = async ({
                         internal {
                             contentFilePath
                         }
+                        tableOfContents
                     }
                 }
             }
@@ -214,21 +215,25 @@ export const createPages: GatsbyNode['createPages'] = async ({
             context: {
                 company: company,
                 slug: companyIndex.fields.slug,
+                title: companyIndex.frontmatter.title,
                 documentTree: documentTree.get(company),
-                breadcrumbs: getBreadcrumbs(companyIndex.fields.slug, companyDocs)
+                breadcrumbs: getBreadcrumbs(companyIndex.fields.slug, companyDocs),
+                tableOfContents: companyIndex.tableOfContents.items,
             }
         })
 
         companyDocs.forEach((doc) => {
-            const { fields: { slug, company }, internal: { contentFilePath } } = doc;
+            const { fields: { slug, company }, frontmatter: { title }, internal: { contentFilePath }, tableOfContents } = doc;
             createPage({
                 component: `${indexPageTemplate}?__contentFilePath=${contentFilePath}`,
                 path: slug,
                 context: {
                     company: company,
                     slug: slug,
+                    title: title,
                     documentTree: documentTree.get(company),
-                    breadcrumbs: getBreadcrumbs(slug, companyDocs)
+                    breadcrumbs: getBreadcrumbs(slug, companyDocs),
+                    tableOfContents: tableOfContents.items,
                 }
             })
         });

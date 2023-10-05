@@ -15,6 +15,7 @@ interface DocumentMdx {
     fields: { slug: string; company: string; }
     frontmatter: { title: string; order: number; }
     internal: { contentFilePath: string; }
+    tableOfContents: { items: TableOfContentsItem[]; };
 }
 
 interface DocumentTreeItem {
@@ -26,4 +27,10 @@ interface DocumentTreeItem {
 interface BreadcrumbItem {
     title: string;
     slug: string;
+}
+
+interface TableOfContentsItem {
+    url: string;
+    title: string;
+    items: TableOfContentsItem[];
 }
