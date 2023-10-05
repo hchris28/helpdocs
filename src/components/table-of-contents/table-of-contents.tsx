@@ -6,12 +6,12 @@ interface TableOfContentsProps {
 }
 
 const TableOfContents: React.FC<TableOfContentsProps> = ({ items })  => {
-    if (!items)
+    if (!items || items.length < 2)
         return null;
 
     return (
         <nav className={styles.container}>
-            Jump to:
+            <span className={styles.tocLabel}>Jump to:</span>
             <ul className={styles.tocContainer}>
                 {items.map(item => (
                     <li className={styles.tocItem} key={item.url}>
