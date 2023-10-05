@@ -108,10 +108,10 @@ const SearchBar: React.FC = () => {
 
     return (
         <div className={styles.searchWindow} ref={searchWindowRef}>
-            <motion.div 
-                layout 
+            <motion.div
+                layout
                 transition={{ duration: 0.2 }}
-                className={classNames(styles.searchInputContainer, { [styles.searching]: searching})}
+                className={classNames(styles.searchInputContainer, { [styles.searching]: searching })}
             >
                 <motion.div layout className={styles.searchIconContainer}>
                     <SearchIcon className={styles.searchIcon} />
@@ -145,7 +145,15 @@ const SearchBar: React.FC = () => {
                             <div className={styles.noResults}>No results found for `{debouncedSearchText}`</div>
                         )}
                         {searching && debouncedSearchText.length <= charSearchMin && (
-                            <div className={styles.noResults}>Please enter at least {charSearchMin + 1} characters</div>
+                            <div className={styles.noResults}>
+                                <p>Start typing to search...</p>
+                                <p>
+                                    {charSearchMin + 1} or more characters required to search.
+                                    <br />
+                                    Click the "x" or press the escape key to close this window.
+                                </p>
+
+                            </div>
                         )}
                         {results.map(({ fields: { slug }, frontmatter: { title }, excerpt }: SearchResult) => (
                             <div
