@@ -5,11 +5,13 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useDebounce } from 'usehooks-ts'
 import SearchIcon from '../icons/search-icon'
 import CloseIcon from '../icons/close-icon'
+import classNames from 'classnames'
 import * as styles from "./search-bar.module.scss"
 
 /* 
     NOTE: This component is using a naive search algorithm. It is not optimized for performance. 
-    If you have a large number of documents, you may want to consider using a search library.
+    If you have a large number of documents, you may want to consider using a more performant
+    search algorithm.
 */
 
 const charSearchMin = 3;
@@ -52,7 +54,22 @@ const SearchBar: React.FC = () => {
     const [searchText, setSearchText] = useState<string>("");
     const debouncedSearchText = useDebounce(searchText, 150);
     const [results, setResults] = useState<SearchResult[]>([]);
+    const [searching, setSearching] = useState<boolean>(false);
 
+    const activateSearch = () => {
+        setSearching(true);
+        searchInputRef.current?.focus();
+        document.body.style.overflow = 'hidden';
+    };
+
+    const deactivateSearch = () => {
+        setSearchText("");
+        setSearching(false);
+        searchInputRef.current?.blur();
+        document.body.style.overflow = 'auto';
+    };
+
+    // Filter search results based on search text
     useEffect(() => {
         if (debouncedSearchText.length > charSearchMin) {
             setResults(data.allMdx.nodes
@@ -72,11 +89,11 @@ const SearchBar: React.FC = () => {
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
-                setSearchText("");
+                deactivateSearch();
             }
             if (e.key === '/' && e.ctrlKey) {
                 e.preventDefault();
-                searchInputRef.current?.focus();
+                activateSearch();
             }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -87,57 +104,63 @@ const SearchBar: React.FC = () => {
     }, []);
 
     // Close search window when user clicks outside of search window
-    useOnClickOutside(searchWindowRef, () => setSearchText(""))
+    useOnClickOutside(searchWindowRef, deactivateSearch);
 
     return (
-        <div className={styles.searchBarContainer}>
-            <div className={styles.searchWindow} ref={searchWindowRef}>
-                <div className={styles.searchInputContainer}>
+        <div className={styles.searchWindow} ref={searchWindowRef}>
+            <motion.div 
+                layout 
+                transition={{ duration: 0.2 }}
+                className={classNames(styles.searchInputContainer, { [styles.searching]: searching})}
+            >
+                <motion.div layout className={styles.searchIconContainer}>
                     <SearchIcon className={styles.searchIcon} />
-                    <input
-                        ref={searchInputRef}
-                        className={styles.searchInput}
-                        type="text"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        placeholder="CTRL + / to search"
-                    />
-                    {debouncedSearchText && (
-                        <button className={styles.clearButton} onClick={() => setSearchText("")}>
-                            <CloseIcon className={styles.closeIcon} />
-                        </button>
-                    )}
-                </div>
-                <AnimatePresence>
-                    {debouncedSearchText && (
-                        <motion.div
-                            key="search-results"
-                            className={styles.searchResultsContainer}
-                            initial={{ y: -242, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1, transition: { duration: 0.2 } }}
-                            exit={{ y: -242, opacity: 0, transition: { duration: 0.2 } }}
-                        >
-                            {debouncedSearchText.length > charSearchMin && results.length === 0 && (
-                                <div className={styles.noResults}>No results found for `{debouncedSearchText}`</div>
-                            )}
-                            {debouncedSearchText.length > 0 && debouncedSearchText.length <= charSearchMin && (
-                                <div className={styles.noResults}>Please enter at least {charSearchMin + 1} characters</div>
-                            )}
-                                {results.map(({ fields: { slug }, frontmatter: { title }, excerpt }: SearchResult) => (
-                                    <div 
-                                        key={slug} 
-                                        className={styles.searchResultItem}
-                                    >
-                                        <Link to={`/${slug}`} className={styles.searchResultTitle}>
-                                            {title}
-                                        </Link>
-                                        <p className={styles.searchResultExcerpt}>{excerpt}</p>
-                                    </div>
-                                ))}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+                </motion.div>
+                <motion.input
+                    layout
+                    ref={searchInputRef}
+                    className={styles.searchInput}
+                    type="text"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    onFocus={activateSearch}
+                    placeholder="CTRL + / to search"
+                />
+                {searching && (
+                    <button className={styles.clearButton} onClick={deactivateSearch}>
+                        <CloseIcon className={styles.closeIcon} />
+                    </button>
+                )}
+            </motion.div>
+            <AnimatePresence>
+                {searching && (
+                    <motion.div
+                        key="search-results"
+                        className={styles.searchResultsContainer}
+                        initial={{ y: -242, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1, transition: { duration: 0.2 } }}
+                        exit={{ y: -242, opacity: 0, transition: { duration: 0.2 } }}
+                    >
+                        {debouncedSearchText.length > charSearchMin && results.length === 0 && (
+                            <div className={styles.noResults}>No results found for `{debouncedSearchText}`</div>
+                        )}
+                        {searching && debouncedSearchText.length <= charSearchMin && (
+                            <div className={styles.noResults}>Please enter at least {charSearchMin + 1} characters</div>
+                        )}
+                        {results.map(({ fields: { slug }, frontmatter: { title }, excerpt }: SearchResult) => (
+                            <div
+                                key={slug}
+                                className={styles.searchResultItem}
+                            >
+                                <Link to={`/${slug}`} className={styles.searchResultTitle}>
+                                    {title}
+                                </Link>
+                                <p className={styles.searchResultExcerpt}>{excerpt}</p>
+                            </div>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }

@@ -6,7 +6,6 @@ import DocumentTree from '../../components/document-tree/document-tree'
 import Document from '../../components/document/document'
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs'
 import MasterLayout from '../../components/layout/master-layout'
-import SearchBar from '../../components/search-bar/search-bar'
 import ToolBar from '../../components/tool-bar/tool-bar'
 import LoadingBoundary from '../../components/loading-boundary/loading-boundary'
 import * as styles from "./index-page.module.scss"
@@ -41,7 +40,6 @@ const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
     return (
         <MasterLayout>
             <LoadingBoundary isLoading={waitingForUserData}>
-                <SearchBar />
                 <ToolBar />
                 <div className={styles.documentExplorer}>
                     <div className={styles.documentTreeContainer}>
