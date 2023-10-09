@@ -113,7 +113,11 @@ const SearchBar: React.FC = () => {
                 transition={{ duration: 0.2 }}
                 className={classNames(styles.searchInputContainer, { [styles.searching]: searching })}
             >
-                <motion.div layout className={styles.searchIconContainer}>
+                <motion.div
+                    layout
+                    className={styles.searchIconContainer}
+                    onClick={activateSearch}
+                >
                     <SearchIcon className={styles.searchIcon} />
                 </motion.div>
                 <motion.input
@@ -124,8 +128,16 @@ const SearchBar: React.FC = () => {
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                     onFocus={activateSearch}
-                    placeholder="CTRL + / to search"
                 />
+                {!searching && (
+                    <motion.div
+                        layout
+                        className={styles.searchLabel}
+                        onClick={activateSearch}
+                    >
+                        CTRL + /
+                    </motion.div>
+                )}
                 {searching && (
                     <button className={styles.clearButton} onClick={deactivateSearch}>
                         <CloseIcon className={styles.closeIcon} />
