@@ -43,7 +43,7 @@ const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
     return (
         <MasterLayout>
             <LoadingBoundary isLoading={waitingForUserData}>
-                <ToolBar title={company} />
+                <ToolBar title={user?.company.name ?? "Help Docs"} />
                 <div className={styles.documentExplorer}>
                     <div className={styles.documentTreeContainer}>
                         <DocumentTree data={documentTree} />
