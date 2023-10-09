@@ -7,10 +7,17 @@
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 2rem;
     gap: 1rem;
     background-color: $blue-green;
     z-index: 50;
+}
+
+.title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #fff;
+    margin-right: auto;
 }
 
 .userName {

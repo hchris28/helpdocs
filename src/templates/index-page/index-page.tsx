@@ -25,7 +25,7 @@ type IndexPageContext = {
 }
 
 const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
-    pageContext: { documentTree, breadcrumbs, title, tableOfContents },
+    pageContext: { documentTree, breadcrumbs, title, tableOfContents, company },
     children
 }) => {
 
@@ -43,7 +43,7 @@ const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
     return (
         <MasterLayout>
             <LoadingBoundary isLoading={waitingForUserData}>
-                <ToolBar />
+                <ToolBar title={company} />
                 <div className={styles.documentExplorer}>
                     <div className={styles.documentTreeContainer}>
                         <DocumentTree data={documentTree} />
