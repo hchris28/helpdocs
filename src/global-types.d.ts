@@ -16,6 +16,7 @@ interface DocumentMdx {
     frontmatter: { title: string; order: number; }
     internal: { contentFilePath: string; }
     tableOfContents: { items: TableOfContentsItem[]; };
+    breadcrumbs: BreadcrumbItem[];
 }
 
 interface DocumentTreeItem {

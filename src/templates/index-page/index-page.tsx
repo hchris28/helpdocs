@@ -39,7 +39,7 @@ const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
             setWaitingForUserData(false);
         }
     }, [user]);
-    console.log(tableOfContents);
+    
     return (
         <MasterLayout>
             <LoadingBoundary isLoading={waitingForUserData}>

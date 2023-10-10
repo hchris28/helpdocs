@@ -82,7 +82,7 @@ const SearchBar: React.FC = () => {
         } else {
             setResults([]);
         }
-    }, [debouncedSearchText, user, data.allMdx.nodes]);
+    }, [debouncedSearchText, user?.company.key, data.allMdx.nodes]);
 
     // Handle keyboard events, close search window when user presses escape
     // and focus on search input when user presses CTRL + forward slash

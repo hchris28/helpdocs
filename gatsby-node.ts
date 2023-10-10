@@ -1,7 +1,7 @@
-import { log } from "console";
+// import { log } from "console";
 import { GatsbyNode } from "gatsby"
-
 import path from 'path';
+// import { getBreadcrumbs } from "./src/utils/getBreadcrumbs";
 
 export const onCreateNode: GatsbyNode["onCreateNode"] = ({
     node,
@@ -67,6 +67,7 @@ export const createPages: GatsbyNode['createPages'] = async ({
                             contentFilePath
                         }
                         tableOfContents
+                        breadcrumbs
                     }
                 }
             }
@@ -173,30 +174,6 @@ export const createPages: GatsbyNode['createPages'] = async ({
         });
     });
 
-    function getBreadcrumbs(slug: string, companyDocs: Array<DocumentMdx>) : BreadcrumbItem[] {
-        const breadcrumbs: BreadcrumbItem[] = [];
-        const end = slug.endsWith('/index') ? -2 : -1;
-        const slugArray = slug.split('/').slice(0, end);
-
-        while (slugArray.length > 1) {
-            const parentSlug = slugArray.join('/');
-            const parent = companyDocs.find((doc) => {
-                return doc.fields.slug === parentSlug
-                    || doc.fields.slug === `${parentSlug}/index`;
-            });
-
-            if (!parent) {
-                log(`Parent not found for ${slug}`);
-                break;
-            }
-
-            breadcrumbs.push({ slug: parent.fields.slug, title: parent.frontmatter.title });
-
-            slugArray.pop();
-        }
-        return breadcrumbs.reverse();
-    }
-
     // Create the pages
     companyGroups.forEach((companyGroup) => {
 
@@ -217,13 +194,13 @@ export const createPages: GatsbyNode['createPages'] = async ({
                 slug: companyIndex.fields.slug,
                 title: companyIndex.frontmatter.title,
                 documentTree: documentTree.get(company),
-                breadcrumbs: getBreadcrumbs(companyIndex.fields.slug, companyDocs),
+                breadcrumbs: companyIndex.breadcrumbs,  // getBreadcrumbs(companyIndex.fields.slug, companyDocs),
                 tableOfContents: companyIndex.tableOfContents.items,
             }
         })
 
         companyDocs.forEach((doc) => {
-            const { fields: { slug, company }, frontmatter: { title }, internal: { contentFilePath }, tableOfContents } = doc;
+            const { fields: { slug, company }, frontmatter: { title }, internal: { contentFilePath }, tableOfContents, breadcrumbs } = doc;
             createPage({
                 component: `${indexPageTemplate}?__contentFilePath=${contentFilePath}`,
                 path: slug,
@@ -232,10 +209,65 @@ export const createPages: GatsbyNode['createPages'] = async ({
                     slug: slug,
                     title: title,
                     documentTree: documentTree.get(company),
-                    breadcrumbs: getBreadcrumbs(slug, companyDocs),
+                    breadcrumbs: breadcrumbs, // getBreadcrumbs(slug, companyDocs),
                     tableOfContents: tableOfContents.items,
                 }
             })
         });
     });
+}
+
+export const createResolvers: GatsbyNode['createResolvers'] = ({
+    createResolvers,
+}) => {
+    createResolvers({
+        Mdx: {
+            breadcrumbs: {
+                type: 'JSON',
+                // TODO: can we find the type definitions for these args?
+                resolve: async (source: DocumentMdx, args: any, context: any, info: any) => {
+                    return getBreadcrumbsResolver(
+                        source.fields.slug,
+                        source.fields.company,
+                        context.nodeModel
+                    );
+                }
+            }
+        }
+    })
+}
+
+async function getBreadcrumbsResolver(slug: string, company: string, sourceData: any): Promise<BreadcrumbItem[]> {
+    // sourceData is context.nodeModel from createResolvers
+    // https://www.gatsbyjs.com/docs/reference/graphql-data-layer/node-model/#example-usage
+    
+    const breadcrumbs: BreadcrumbItem[] = [];
+    const end = slug.endsWith('/index') ? -2 : -1;
+    const slugArray = slug.split('/').slice(0, end);
+
+    while (slugArray.length > 1) {
+        const parentSlug = slugArray.join('\/');
+
+        const parent = await sourceData.findOne({
+            type: `Mdx`,
+            query: {
+                filter: {
+                    fields: {
+                        company: { eq: company },
+                        slug: { regex: `/^${parentSlug}(\/index)?$/` }
+                    }
+                }
+            }
+        });
+
+        if (!parent) {
+            break;
+        }
+
+        breadcrumbs.push({ slug: parent.fields.slug, title: parent.frontmatter.title });
+
+        slugArray.pop();
+    }
+
+    return breadcrumbs.reverse();
 }
