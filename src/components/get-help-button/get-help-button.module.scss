@@ -1,0 +1,23 @@
+@import "../../styles/global.scss";
+
+.button {
+    @include as-button($bg-color: $selective-yellow, $bg-color-hover: $ut-orange);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: none;
+        color: $text-color-default;
+    }
+
+    svg {
+        fill: $text-color-default;
+    }
+}
+
+.buttonText {
+    font-size: 1rem;
+}

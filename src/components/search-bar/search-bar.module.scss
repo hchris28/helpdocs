@@ -12,8 +12,8 @@
     justify-content: center;
     width: 200px;
     border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 0.5rem;
-    padding: 0.75rem;
+    border-radius: 0.25rem;
+    padding: 0.4rem;
     background-color: #fff;
     color: $text-color-default;
     position: relative; // needed for z-index
@@ -21,6 +21,7 @@
 
     &:focus-within {
         box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
+        padding: 0.75rem;
     }
 }
 

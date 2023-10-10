@@ -35,3 +35,13 @@ interface TableOfContentsItem {
     title: string;
     items: TableOfContentsItem[];
 }
+
+interface SiteMetaData {
+    site: {
+        siteMetadata: {
+            title?: string
+            siteUrl?: string
+            helpLink?: string
+        }
+    }
+}

@@ -4,6 +4,7 @@ const config: GatsbyConfig = {
     siteMetadata: {
         title: `Help Docs`,
         siteUrl: `https://help.xeelee.org`,
+        helpLink: `mailto:chris@xeelee.org?subject=Gently%20Hugged%20web%20site%20help`,
     },
     // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
     // If you use VSCode you can also use the GraphQL plugin
