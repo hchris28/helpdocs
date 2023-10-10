@@ -1,3 +1,4 @@
+@use 'sass:color';
 @import '../../styles/global.scss';
 
 .searchWindow {
@@ -17,7 +18,7 @@
     color: $text-color-default;
     position: relative; // needed for z-index
     z-index: 101; // for positioning on top of search results container
-    
+
     &:focus-within {
         box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
     }
@@ -83,7 +84,7 @@
     justify-content: center;
     align-content: flex-start;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 3rem;
     border-radius: 0.5rem;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
     background-color: rgba($sky-blue, .95);
@@ -99,21 +100,55 @@
 }
 
 .searchResultItem {
-    background-color: rgba(255, 255, 255, .3);
+    background-color: #fff;
     padding: 1rem;
     border-radius: .5rem;
     max-width: 30vw;
+    cursor: pointer;
+    overflow: hidden;
+    border-bottom: solid 7px transparent;
+
+    &:hover, &:focus-within {
+        border-bottom: solid 7px $ut-orange;
+    }
+}
+
+.searchResultHeader {
+    position: relative;
+    top: -1rem;
+    left: -1rem;
+    width: calc(100% + 2rem);
+    padding: 1rem;
+    background-color: color.adjust($sky-blue, $lightness: 20%);
+}
+
+.searchResultBreadcrumbs {
+    display: flex;
+    gap: .5rem;
+    font-size: .9rem;
+    font-weight: 700;
+
+    &::before {
+        content: 'In:';
+    }
+}
+
+.searchResultBreadcrumb {
+    &:not(:last-child)::after {
+        content: '>';
+        margin-left: .5rem  ;
+    }
 }
 
 .searchResultTitle {
     font-size: 1.15rem;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .searchResultExcerpt {
-    font-size: 1rem;
+    font-size: .95rem;
     font-style: italic;
-    margin: 0;
+    margin: .75rem 0;
 }
 
 .noResults {

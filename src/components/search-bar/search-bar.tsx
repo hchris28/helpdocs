@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useStaticQuery, graphql, Link } from "gatsby"
+import { useStaticQuery, graphql, navigate, Link } from "gatsby"
 import { useReadLocalStorage, useOnClickOutside } from 'usehooks-ts'
 import { motion, AnimatePresence } from "framer-motion"
 import { useDebounce } from 'usehooks-ts'
@@ -26,6 +26,7 @@ type SearchResult = {
     }
     body: string
     excerpt: string
+    breadcrumbs: BreadcrumbItem[]
 };
 
 const SearchBar: React.FC = () => {
@@ -43,6 +44,7 @@ const SearchBar: React.FC = () => {
                     }
                     body
                     excerpt
+                    breadcrumbs
                 }
             }
         }
@@ -167,16 +169,29 @@ const SearchBar: React.FC = () => {
 
                             </div>
                         )}
-                        {results.map(({ fields: { slug }, frontmatter: { title }, excerpt }: SearchResult) => (
-                            <div
+                        {results.map(({ fields: { slug }, frontmatter: { title }, excerpt, breadcrumbs }: SearchResult) => (
+                            <motion.div
+                                layout
                                 key={slug}
                                 className={styles.searchResultItem}
+                                onClick={() => navigate(`/${slug}`)}
                             >
-                                <Link to={`/${slug}`} className={styles.searchResultTitle}>
-                                    {title}
-                                </Link>
+                                <div className={styles.searchResultHeader}>
+                                    <Link to={`/${slug}`} className={styles.searchResultTitle}>{title}</Link>
+                                    {breadcrumbs.length > 0 && (
+                                        <div className={styles.searchResultBreadcrumbs}>
+                                            {breadcrumbs.map((item, index) => {
+                                                return (
+                                                    <span className={styles.searchResultBreadcrumb} key={index}>
+                                                        <Link to={`/${item.slug}`}>{item.title}</Link>
+                                                    </span>
+                                                )
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
                                 <p className={styles.searchResultExcerpt}>{excerpt}</p>
-                            </div>
+                            </motion.div>
                         ))}
                     </motion.div>
                 )}
