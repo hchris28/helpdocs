@@ -12,7 +12,7 @@ const IndexPage: React.FC<PageProps> = () => {
     const [waitingForUserData, setWaitingForUserData] = useState(true);
 
     useEffect(() => {
-        if (user == null || !user?.Anonymous) {
+        if (user != null && !user?.Anonymous) {
             navigate(`/${user?.company.key}/`);
         } else {
             setWaitingForUserData(false);
