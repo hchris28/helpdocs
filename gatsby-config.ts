@@ -64,7 +64,60 @@ const config: GatsbyConfig = {
             },
             __key: "data"
         },
+        {
+            resolve: `gatsby-plugin-fusejs`,
+            options: {
+                query: `
+                    query SearchIndex {
+                        allMdx {
+                            nodes {
+                                id,
+                                frontmatter {
+                                    title
+                                }
+                                fields {
+                                    slug
+                                    company
+                                }
+                                body
+                            }
+                        }
+                    }`,
+                keys: ['title', 'body', 'company'],
+                normalizer: ({ data }: SearchSourceQueryResult): SearchIndexItem[] =>
+                    data.allMdx.nodes.map((node) => ({
+                        id: node.id,
+                        title: node.frontmatter.title,
+                        body: node.body,
+                        slug: node.fields.slug,
+                        company: node.fields.company,
+                    })),
+            },
+        },
     ]
 };
+
+interface SearchSourceItem {
+    id: string;
+    frontmatter: { title: string; };
+    fields: { slug: string; company: string; };
+    body: string;
+}
+
+interface SearchSourceQueryResult {
+    data: {
+        allMdx: {
+            nodes: SearchSourceItem[];
+        }
+    }
+}
+
+interface SearchIndexItem {
+    id: string;
+    title: string;
+    body: string;
+    slug: string;
+    company: string;
+}
 
 export default config;
