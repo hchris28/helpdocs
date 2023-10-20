@@ -34,7 +34,7 @@ const SearchBar: React.FC = () => {
     const debouncedSearchText = useDebounce(searchText, 150);
     const [searching, setSearching] = useState<boolean>(false);
     const results: FuseResult[] = useGatsbyPluginFusejs(debouncedSearchText, data.fusejs);
-    
+
     const activateSearch = () => {
         setSearching(true);
         searchInputRef.current?.focus();
@@ -69,6 +69,10 @@ const SearchBar: React.FC = () => {
 
     // Close search window when user clicks outside of search window
     useOnClickOutside(searchWindowRef, deactivateSearch);
+
+    const showNoResultsMessage = debouncedSearchText.length > charSearchMin && results.length === 0;
+    const showInstructions = debouncedSearchText.length <= charSearchMin;
+    const showResultList = debouncedSearchText.length > charSearchMin && results.length > 0;
 
     return (
         <div className={styles.searchWindow} ref={searchWindowRef}>
@@ -117,10 +121,10 @@ const SearchBar: React.FC = () => {
                         animate={{ y: 0, opacity: 1, transition: { duration: 0.2 } }}
                         exit={{ y: -242, opacity: 0, transition: { duration: 0.2 } }}
                     >
-                        {debouncedSearchText.length > charSearchMin && results.length === 0 && (
+                        {showNoResultsMessage && (
                             <div className={styles.noResults}>No results found for `{debouncedSearchText}`</div>
                         )}
-                        {searching && debouncedSearchText.length <= charSearchMin && (
+                        {showInstructions && (
                             <div className={styles.noResults}>
                                 <p>Start typing to search...</p>
                                 <p>
@@ -131,7 +135,7 @@ const SearchBar: React.FC = () => {
 
                             </div>
                         )}
-                        {results.map(({ item: { slug, title, excerpt, breadcrumbs } }: FuseResult) => (
+                        {showResultList && results.map(({ item: { slug, title, excerpt, breadcrumbs } }: FuseResult) => (
                             <motion.div
                                 layout
                                 key={slug}
