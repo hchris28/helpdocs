@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useStaticQuery, graphql, navigate, Link } from "gatsby"
+import { useGatsbyPluginFusejs } from 'react-use-fusejs'
 import { useReadLocalStorage, useOnClickOutside } from 'usehooks-ts'
 import { motion, AnimatePresence } from "framer-motion"
 import { useDebounce } from 'usehooks-ts'
@@ -8,44 +9,20 @@ import CloseIcon from '../icons/close-icon'
 import classNames from 'classnames'
 import * as styles from "./search-bar.module.scss"
 
-/* 
-    NOTE: This component is using a naive search algorithm. It is not optimized for performance. 
-    If you have a large number of documents, you may want to consider using a more performant
-    search algorithm.
-*/
-
 const charSearchMin = 3;
 
-type SearchResult = {
-    fields: {
-        company: string
-        slug: string
-    }
-    frontmatter: {
-        title: string
-    }
-    body: string
-    excerpt: string
-    breadcrumbs: BreadcrumbItem[]
-};
+interface FuseResult {
+    item: SearchIndexItem;
+    refIndex: number;
+}
 
 const SearchBar: React.FC = () => {
 
     const data = useStaticQuery(graphql`
-        query SearchQuery {
-            allMdx(sort: { frontmatter: { order: ASC }}) {
-                nodes {
-                    fields {
-                        company
-                        slug
-                    }
-                    frontmatter {
-                        title
-                    }
-                    body
-                    excerpt
-                    breadcrumbs
-                }
+        query Search {
+            fusejs {
+                index
+                data
             }
         }
     `);
@@ -55,9 +32,9 @@ const SearchBar: React.FC = () => {
     const user = useReadLocalStorage<User>('user');
     const [searchText, setSearchText] = useState<string>("");
     const debouncedSearchText = useDebounce(searchText, 150);
-    const [results, setResults] = useState<SearchResult[]>([]);
     const [searching, setSearching] = useState<boolean>(false);
-
+    const results: FuseResult[] = useGatsbyPluginFusejs(debouncedSearchText, data.fusejs);
+    
     const activateSearch = () => {
         setSearching(true);
         searchInputRef.current?.focus();
@@ -70,21 +47,6 @@ const SearchBar: React.FC = () => {
         searchInputRef.current?.blur();
         document.body.style.overflow = 'auto';
     };
-
-    // Filter search results based on search text
-    useEffect(() => {
-        if (debouncedSearchText.length > charSearchMin) {
-            setResults(data.allMdx.nodes
-                .filter(({ fields: { company }, frontmatter: { title }, body }: SearchResult) => {
-                    return company === user?.company.key && (
-                        title.toLowerCase().includes(debouncedSearchText.toLowerCase())
-                        || body.toLowerCase().includes(debouncedSearchText.toLowerCase())
-                    );
-                }));
-        } else {
-            setResults([]);
-        }
-    }, [debouncedSearchText, user?.company.key, data.allMdx.nodes]);
 
     // Handle keyboard events, close search window when user presses escape
     // and focus on search input when user presses CTRL + forward slash
@@ -169,7 +131,7 @@ const SearchBar: React.FC = () => {
 
                             </div>
                         )}
-                        {results.map(({ fields: { slug }, frontmatter: { title }, excerpt, breadcrumbs }: SearchResult) => (
+                        {results.map(({ item: { slug, title, excerpt, breadcrumbs } }: FuseResult) => (
                             <motion.div
                                 layout
                                 key={slug}

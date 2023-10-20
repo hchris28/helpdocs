@@ -79,19 +79,25 @@ const config: GatsbyConfig = {
                                     slug
                                     company
                                 }
+                                breadcrumbs
+                                excerpt
                                 body
                             }
                         }
                     }`,
                 keys: ['title', 'body', 'company'],
-                normalizer: ({ data }: SearchSourceQueryResult): SearchIndexItem[] =>
-                    data.allMdx.nodes.map((node) => ({
+                normalizer: ({ data }: SearchSourceQueryResult): SearchIndexItem[] => {
+                    // should we clean up the body text here? remove html tags? remove inisignificant words?
+                    return data.allMdx.nodes.map((node) => ({
                         id: node.id,
                         title: node.frontmatter.title,
                         body: node.body,
                         slug: node.fields.slug,
                         company: node.fields.company,
-                    })),
+                        breadcrumbs: node.breadcrumbs,
+                        excerpt: node.excerpt,
+                    }))
+                },
             },
         },
     ]
@@ -101,6 +107,8 @@ interface SearchSourceItem {
     id: string;
     frontmatter: { title: string; };
     fields: { slug: string; company: string; };
+    breadcrumbs: BreadcrumbItem[];
+    excerpt: string;
     body: string;
 }
 
@@ -110,14 +118,6 @@ interface SearchSourceQueryResult {
             nodes: SearchSourceItem[];
         }
     }
-}
-
-interface SearchIndexItem {
-    id: string;
-    title: string;
-    body: string;
-    slug: string;
-    company: string;
 }
 
 export default config;

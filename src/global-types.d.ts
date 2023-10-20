@@ -45,3 +45,13 @@ interface SiteMetaData {
         }
     }
 }
+
+interface SearchIndexItem {
+    id: string;
+    title: string;
+    body: string;
+    slug: string;
+    company: string;
+    breadcrumbs: BreadcrumbItem[];
+    excerpt?: string;
+}
