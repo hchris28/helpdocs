@@ -33,7 +33,12 @@ const SearchBar: React.FC = () => {
     const [searchText, setSearchText] = useState<string>("");
     const debouncedSearchText = useDebounce(searchText, 150);
     const [searching, setSearching] = useState<boolean>(false);
-    const results: FuseResult[] = useGatsbyPluginFusejs(debouncedSearchText, data.fusejs);
+    const allResults: FuseResult[] = useGatsbyPluginFusejs(debouncedSearchText, data.fusejs);
+
+    const results = allResults.filter((result) => {
+        const { item } = result;
+        return user?.company.key === item.company;
+    });
 
     const activateSearch = () => {
         setSearching(true);
