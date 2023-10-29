@@ -16,6 +16,11 @@ interface FuseResult {
     refIndex: number;
 }
 
+// https://www.fusejs.io/api/options.html#includematches
+const fuseOptions = {
+    threshold: 0.4
+};
+
 const SearchBar: React.FC = () => {
 
     const data = useStaticQuery(graphql`
@@ -33,7 +38,9 @@ const SearchBar: React.FC = () => {
     const [searchText, setSearchText] = useState<string>("");
     const debouncedSearchText = useDebounce(searchText, 150);
     const [searching, setSearching] = useState<boolean>(false);
-    const allResults: FuseResult[] = useGatsbyPluginFusejs(debouncedSearchText, data.fusejs);
+    const allResults: FuseResult[] = useGatsbyPluginFusejs(debouncedSearchText, data.fusejs, fuseOptions);
+
+    console.log('allResults', allResults);
 
     const results = allResults.filter((result) => {
         const { item } = result;

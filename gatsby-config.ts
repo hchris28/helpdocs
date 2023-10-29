@@ -87,7 +87,7 @@ const config: GatsbyConfig = {
                     }`,
                 keys: ['title', 'body', 'company'],
                 normalizer: ({ data }: SearchSourceQueryResult): SearchIndexItem[] => {
-                    // should we clean up the body text here? remove html tags? remove inisignificant words?
+                    // should we clean up the body text here? remove html tags? remove insignificant words?
                     return data.allMdx.nodes.map((node) => ({
                         id: node.id,
                         title: node.frontmatter.title,
