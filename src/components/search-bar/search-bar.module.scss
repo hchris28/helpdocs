@@ -18,11 +18,6 @@
     color: $text-color-default;
     position: relative; // needed for z-index
     z-index: 101; // for positioning on top of search results container
-
-    &:focus-within {
-        box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
-        padding: 0.75rem;
-    }
 }
 
 .searchLabel {
@@ -38,6 +33,8 @@
     position: fixed;
     left: calc(50vw - 30vw);
     width: 60vw;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
+    padding: 0.75rem;
 }
 
 .searchInput {

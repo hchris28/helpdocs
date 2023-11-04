@@ -64,7 +64,60 @@ const config: GatsbyConfig = {
             },
             __key: "data"
         },
+        {
+            resolve: `gatsby-plugin-fusejs`,
+            options: {
+                query: `
+                    query SearchIndex {
+                        allMdx {
+                            nodes {
+                                id,
+                                frontmatter {
+                                    title
+                                }
+                                fields {
+                                    slug
+                                    company
+                                }
+                                breadcrumbs
+                                excerpt
+                                body
+                            }
+                        }
+                    }`,
+                keys: ['title', 'body', 'company'],
+                normalizer: ({ data }: SearchSourceQueryResult): SearchIndexItem[] => {
+                    // should we clean up the body text here? remove html tags? remove insignificant words?
+                    return data.allMdx.nodes.map((node) => ({
+                        id: node.id,
+                        title: node.frontmatter.title,
+                        body: node.body,
+                        slug: node.fields.slug,
+                        company: node.fields.company,
+                        breadcrumbs: node.breadcrumbs,
+                        excerpt: node.excerpt,
+                    }))
+                },
+            },
+        },
     ]
 };
+
+interface SearchSourceItem {
+    id: string;
+    frontmatter: { title: string; };
+    fields: { slug: string; company: string; };
+    breadcrumbs: BreadcrumbItem[];
+    excerpt: string;
+    body: string;
+}
+
+interface SearchSourceQueryResult {
+    data: {
+        allMdx: {
+            nodes: SearchSourceItem[];
+        }
+    }
+}
 
 export default config;

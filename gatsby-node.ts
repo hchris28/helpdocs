@@ -194,7 +194,7 @@ export const createPages: GatsbyNode['createPages'] = async ({
                 slug: companyIndex.fields.slug,
                 title: companyIndex.frontmatter.title,
                 documentTree: documentTree.get(company),
-                breadcrumbs: companyIndex.breadcrumbs,  // getBreadcrumbs(companyIndex.fields.slug, companyDocs),
+                breadcrumbs: companyIndex.breadcrumbs,
                 tableOfContents: companyIndex.tableOfContents.items,
             }
         })
@@ -209,7 +209,7 @@ export const createPages: GatsbyNode['createPages'] = async ({
                     slug: slug,
                     title: title,
                     documentTree: documentTree.get(company),
-                    breadcrumbs: breadcrumbs, // getBreadcrumbs(slug, companyDocs),
+                    breadcrumbs: breadcrumbs,
                     tableOfContents: tableOfContents.items,
                 }
             })
@@ -233,7 +233,7 @@ export const createResolvers: GatsbyNode['createResolvers'] = ({
                     );
                 }
             }
-        }
+        },
     })
 }
 

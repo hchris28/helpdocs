@@ -33,10 +33,14 @@ const IndexPage: React.FC<PageProps<IndexPageProps, IndexPageContext>> = ({
     const [waitingForUserData, setWaitingForUserData] = useState(true);
 
     useEffect(() => {
-        if (user == null || user?.Anonymous) {
-            navigate("/");
-        } else {
-            setWaitingForUserData(false);
+        if (user != null) {
+            if (user.Anonymous) {
+                navigate("/");
+            } else if (user.company.key !== company) {
+                navigate("/not-authorized");
+            } else {
+                setWaitingForUserData(false);
+            }
         }
     }, [user]);
     

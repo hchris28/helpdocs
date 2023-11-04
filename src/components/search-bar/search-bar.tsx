@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useStaticQuery, graphql, navigate, Link } from "gatsby"
+import { useGatsbyPluginFusejs } from 'react-use-fusejs'
 import { useReadLocalStorage, useOnClickOutside } from 'usehooks-ts'
 import { motion, AnimatePresence } from "framer-motion"
 import { useDebounce } from 'usehooks-ts'
@@ -8,44 +9,25 @@ import CloseIcon from '../icons/close-icon'
 import classNames from 'classnames'
 import * as styles from "./search-bar.module.scss"
 
-/* 
-    NOTE: This component is using a naive search algorithm. It is not optimized for performance. 
-    If you have a large number of documents, you may want to consider using a more performant
-    search algorithm.
-*/
-
 const charSearchMin = 3;
 
-type SearchResult = {
-    fields: {
-        company: string
-        slug: string
-    }
-    frontmatter: {
-        title: string
-    }
-    body: string
-    excerpt: string
-    breadcrumbs: BreadcrumbItem[]
+interface FuseResult {
+    item: SearchIndexItem;
+    refIndex: number;
+}
+
+// https://www.fusejs.io/api/options.html#includematches
+const fuseOptions = {
+    threshold: 0.4
 };
 
 const SearchBar: React.FC = () => {
 
     const data = useStaticQuery(graphql`
-        query SearchQuery {
-            allMdx(sort: { frontmatter: { order: ASC }}) {
-                nodes {
-                    fields {
-                        company
-                        slug
-                    }
-                    frontmatter {
-                        title
-                    }
-                    body
-                    excerpt
-                    breadcrumbs
-                }
+        query Search {
+            fusejs {
+                index
+                data
             }
         }
     `);
@@ -55,8 +37,15 @@ const SearchBar: React.FC = () => {
     const user = useReadLocalStorage<User>('user');
     const [searchText, setSearchText] = useState<string>("");
     const debouncedSearchText = useDebounce(searchText, 150);
-    const [results, setResults] = useState<SearchResult[]>([]);
     const [searching, setSearching] = useState<boolean>(false);
+    const allResults: FuseResult[] = useGatsbyPluginFusejs(debouncedSearchText, data.fusejs, fuseOptions);
+
+    console.log('allResults', allResults);
+
+    const results = allResults.filter((result) => {
+        const { item } = result;
+        return user?.company.key === item.company;
+    });
 
     const activateSearch = () => {
         setSearching(true);
@@ -70,21 +59,6 @@ const SearchBar: React.FC = () => {
         searchInputRef.current?.blur();
         document.body.style.overflow = 'auto';
     };
-
-    // Filter search results based on search text
-    useEffect(() => {
-        if (debouncedSearchText.length > charSearchMin) {
-            setResults(data.allMdx.nodes
-                .filter(({ fields: { company }, frontmatter: { title }, body }: SearchResult) => {
-                    return company === user?.company.key && (
-                        title.toLowerCase().includes(debouncedSearchText.toLowerCase())
-                        || body.toLowerCase().includes(debouncedSearchText.toLowerCase())
-                    );
-                }));
-        } else {
-            setResults([]);
-        }
-    }, [debouncedSearchText, user?.company.key, data.allMdx.nodes]);
 
     // Handle keyboard events, close search window when user presses escape
     // and focus on search input when user presses CTRL + forward slash
@@ -107,6 +81,10 @@ const SearchBar: React.FC = () => {
 
     // Close search window when user clicks outside of search window
     useOnClickOutside(searchWindowRef, deactivateSearch);
+
+    const showNoResultsMessage = debouncedSearchText.length > charSearchMin && results.length === 0;
+    const showInstructions = debouncedSearchText.length <= charSearchMin;
+    const showResultList = debouncedSearchText.length > charSearchMin && results.length > 0;
 
     return (
         <div className={styles.searchWindow} ref={searchWindowRef}>
@@ -155,10 +133,10 @@ const SearchBar: React.FC = () => {
                         animate={{ y: 0, opacity: 1, transition: { duration: 0.2 } }}
                         exit={{ y: -242, opacity: 0, transition: { duration: 0.2 } }}
                     >
-                        {debouncedSearchText.length > charSearchMin && results.length === 0 && (
+                        {showNoResultsMessage && (
                             <div className={styles.noResults}>No results found for `{debouncedSearchText}`</div>
                         )}
-                        {searching && debouncedSearchText.length <= charSearchMin && (
+                        {showInstructions && (
                             <div className={styles.noResults}>
                                 <p>Start typing to search...</p>
                                 <p>
@@ -169,7 +147,7 @@ const SearchBar: React.FC = () => {
 
                             </div>
                         )}
-                        {results.map(({ fields: { slug }, frontmatter: { title }, excerpt, breadcrumbs }: SearchResult) => (
+                        {showResultList && results.map(({ item: { slug, title, excerpt, breadcrumbs } }: FuseResult) => (
                             <motion.div
                                 layout
                                 key={slug}
